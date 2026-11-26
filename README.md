@@ -1,5 +1,7 @@
 # OutlookBypass
 
+English | [简体中文](README.zh-CN.md)
+
 LSPosed module that skips the MDM / device-administrator enrollment screen in **Microsoft Outlook for Android** (`com.microsoft.office.outlook`), so you can sign in with an Exchange account without enrolling the device.
 
 ## How it works
@@ -77,16 +79,3 @@ The module only changes Outlook's local client-side check; server-side and organ
 ## License
 
 [MIT](LICENSE). Original copyright belongs to takattowo.
-
----
-
-## 中文说明
-
-适用于 Android 的 LSPosed 模块，跳过 Outlook 登录 Exchange 账号时弹出的 MDM / 设备管理员激活页，不用把手机注册为受管设备。
-
-- 作用域固定为 Outlook，Hook `DevicePolicy.requiresDeviceManagement()`（返回 `false`）和 `isPolicyApplied()`（返回 `true`）
-- 已验证：Android 17（SDK 37）/ HyperOS 4.0.6、KernelSU 32680 + Zygisk Next 1.5.2、LSPosed 2.2.1（libxposed API 102）、Outlook 5.2645.1
-- 安装：装 APK → LSPosed 启用模块并勾选 Outlook → 强行停止 Outlook 再打开
-- 若 Zygisk Next 处于白名单模式（`enforce_denylist=1`）：需在 KernelSU 超级用户列表里加入 Outlook（root 开关可保持关闭），然后重启，否则模块不会被注入
-- 构建：推送或打 `v*` 标签会自动出包；本地执行 `./gradlew :app:assembleRelease`（JDK 21、SDK 36），默认 debug 签名
-- 上游：[takattowo/OutlookDevicePolicyBypass](https://github.com/takattowo/OutlookDevicePolicyBypass)，MIT 许可
