@@ -13,15 +13,14 @@ val keystoreProperties = Properties().apply {
 
 android {
     namespace = "com.outlookbypass.xposed"
-    compileSdk = 37
-    buildToolsVersion = "37.0.0"
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.outlookbypass.xposed"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.1.0"
+        versionCode = 3
+        versionName = "1.1.1"
     }
 
     signingConfigs {
@@ -42,7 +41,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -61,7 +60,6 @@ android {
     packaging {
         resources {
             merges += "META-INF/xposed/*"
-            excludes += "**"
         }
     }
 

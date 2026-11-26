@@ -15,24 +15,31 @@ public class ModuleMain extends XposedModule {
 
     @Override
     public void onModuleLoaded(ModuleLoadedParam param) {
-        log(Log.INFO, TAG, "module loaded in " + param.getProcessName());
+        log(Log.INFO, TAG, "module loaded in " + param.getProcessName()
+                + "; framework=" + getFrameworkName() + " " + getFrameworkVersion());
     }
 
     @Override
-    public void onPackageReady(PackageReadyParam param) {
+    public void onPackageLoaded(PackageLoadedParam param) {
+        log(Log.INFO, TAG, "package loaded: " + param.getPackageName());
         if (!TARGET_PKG.equals(param.getPackageName())) return;
 
-        ClassLoader cl = param.getClassLoader();
         Class<?> devicePolicy;
         try {
-            devicePolicy = Class.forName(DEVICE_POLICY_CLASS, false, cl);
-        } catch (ClassNotFoundException e) {
-            log(Log.WARN, TAG, "DevicePolicy class not found; Outlook version may have moved/renamed it", e);
+            devicePolicy = Class.forName(DEVICE_POLICY_CLASS, false, param.getDefaultClassLoader());
+        } catch (Throwable e) {
+            log(Log.ERROR, TAG, "DevicePolicy class not found", e);
             return;
         }
 
         hookBoolean(devicePolicy, "requiresDeviceManagement", false);
         hookBoolean(devicePolicy, "isPolicyApplied", true);
+    }
+
+    @Override
+    public void onPackageReady(PackageReadyParam param) {
+        if (!TARGET_PKG.equals(param.getPackageName())) return;
+        log(Log.INFO, TAG, "package ready for " + param.getPackageName());
     }
 
     private void hookBoolean(Class<?> owner, String methodName, boolean forced) {
@@ -43,7 +50,10 @@ public class ModuleMain extends XposedModule {
             log(Log.WARN, TAG, owner.getName() + "." + methodName + "() not found", e);
             return;
         }
-        hook(m).intercept(chain -> forced);
+        hook(m).intercept(chain -> {
+            log(Log.INFO, TAG, methodName + "() called on " + chain.getThisObject() + " -> " + forced);
+            return forced;
+        });
         log(Log.INFO, TAG, "hooked " + owner.getSimpleName() + "." + methodName + " -> " + forced);
     }
 }
